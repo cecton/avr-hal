@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["ddre","Data Direction Register, Port E"],["pine","Input Pins, Port E"],["porte","Data Register, Port E"]],"struct":[["RegisterBlock","Register block"]],"type":[["DDRE","Data Direction Register, Port E"],["PINE","Input Pins, Port E"],["PORTE","Data Register, Port E"]]});

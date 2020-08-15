@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["PD0_R","Reader of field `PD0`"],["PD1_R","Reader of field `PD1`"],["PD2_R","Reader of field `PD2`"],["PD3_R","Reader of field `PD3`"],["PD4_R","Reader of field `PD4`"],["PD5_R","Reader of field `PD5`"],["PD6_R","Reader of field `PD6`"],["PD7_R","Reader of field `PD7`"],["R","Reader of register PIND"]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["mcucr","MCU Control Register"],["mcusr","MCU Status Register"],["ocdr","On-Chip Debug Related Register in I/O Memory"]],"struct":[["RegisterBlock","Register block"]],"type":[["MCUCR","MCU Control Register"],["MCUSR","MCU Status Register"],["OCDR","On-Chip Debug Related Register in I/O Memory"]]});

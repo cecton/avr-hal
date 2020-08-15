@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["eearl","EEPROM Address Register Low Byte"],["eecr","EEPROM Control Register"],["eedr","EEPROM Data Register"]],"struct":[["RegisterBlock","Register block"]],"type":[["EEARL","EEPROM Address Register Low Byte"],["EECR","EEPROM Control Register"],["EEDR","EEPROM Data Register"]]});

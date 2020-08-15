@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ENHC4_W","Write proxy for field `ENHC4`"],["OC4OE_W","Write proxy for field `OC4OE`"],["TLOCK4_W","Write proxy for field `TLOCK4`"]],"type":[["ENHC4_R","Reader of field `ENHC4`"],["OC4OE_R","Reader of field `OC4OE`"],["R","Reader of register TCCR4E"],["TLOCK4_R","Reader of field `TLOCK4`"],["W","Writer for register TCCR4E"]]});

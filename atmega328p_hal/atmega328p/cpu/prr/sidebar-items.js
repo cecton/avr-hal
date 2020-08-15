@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["PRADC_R","Reader of field `PRADC`"],["PRSPI_R","Reader of field `PRSPI`"],["PRTIM0_R","Reader of field `PRTIM0`"],["PRTIM1_R","Reader of field `PRTIM1`"],["PRTIM2_R","Reader of field `PRTIM2`"],["PRTWI_R","Reader of field `PRTWI`"],["PRUSART0_R","Reader of field `PRUSART0`"],["R","Reader of register PRR"]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["RAMPZ_A","Extended Z-Pointer Value"]],"struct":[["RAMPZ_W","Write proxy for field `RAMPZ`"],["RES_W","Write proxy for field `Res`"]],"type":[["R","Reader of register RAMPZ"],["RAMPZ_R","Reader of field `RAMPZ`"],["RES_R","Reader of field `Res`"],["W","Writer for register RAMPZ"]]});

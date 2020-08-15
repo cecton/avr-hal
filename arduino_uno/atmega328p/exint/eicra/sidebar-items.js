@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ISC0_A","External Interrupt Sense Control 0 Bits"],["ISC1_A","External Interrupt Sense Control 1 Bits"]],"struct":[["ISC0_W","Write proxy for field `ISC0`"],["ISC1_W","Write proxy for field `ISC1`"]],"type":[["ISC0_R","Reader of field `ISC0`"],["ISC1_R","Reader of field `ISC1`"],["R","Reader of register EICRA"],["W","Writer for register EICRA"]]});

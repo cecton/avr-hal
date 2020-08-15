@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["FOC5A_W","Write proxy for field `FOC5A`"],["FOC5B_W","Write proxy for field `FOC5B`"],["FOC5C_W","Write proxy for field `FOC5C`"]],"type":[["W","Writer for register TCCR5C"]]});

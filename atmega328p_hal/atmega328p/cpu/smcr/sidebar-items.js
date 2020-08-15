@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["SM_A","Sleep Mode Select Bits"]],"struct":[["SE_W","Write proxy for field `SE`"],["SM_W","Write proxy for field `SM`"]],"type":[["R","Reader of register SMCR"],["SE_R","Reader of field `SE`"],["SM_R","Reader of field `SM`"],["W","Writer for register SMCR"]]});

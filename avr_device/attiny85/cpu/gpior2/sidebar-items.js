@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["R","Reader of register GPIOR2"],["W","Writer for register GPIOR2"]]});

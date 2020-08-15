@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["UVREGE_W","Write proxy for field `UVREGE`"]],"type":[["R","Reader of register UHWCON"],["UVREGE_R","Reader of field `UVREGE`"],["W","Writer for register UHWCON"]]});

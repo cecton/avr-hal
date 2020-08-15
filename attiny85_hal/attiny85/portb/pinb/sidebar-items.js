@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["PB0_R","Reader of field `PB0`"],["PB1_R","Reader of field `PB1`"],["PB2_R","Reader of field `PB2`"],["PB3_R","Reader of field `PB3`"],["PB4_R","Reader of field `PB4`"],["PB5_R","Reader of field `PB5`"],["R","Reader of register PINB"]]});

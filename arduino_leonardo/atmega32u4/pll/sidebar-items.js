@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["pllcsr","PLL Status and Control register"],["pllfrq","PLL Frequency Control Register"]],"struct":[["RegisterBlock","Register block"]],"type":[["PLLCSR","PLL Status and Control register"],["PLLFRQ","PLL Frequency Control Register"]]});

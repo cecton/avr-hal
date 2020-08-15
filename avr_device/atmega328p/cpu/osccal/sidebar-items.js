@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["OSCCAL_R","Reader of field `OSCCAL`"],["R","Reader of register OSCCAL"]]});

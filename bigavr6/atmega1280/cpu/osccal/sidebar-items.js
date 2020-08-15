@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["OSCCAL_W","Write proxy for field `OSCCAL`"]],"type":[["OSCCAL_R","Reader of field `OSCCAL`"],["R","Reader of register OSCCAL"],["W","Writer for register OSCCAL"]]});

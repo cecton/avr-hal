@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["PSRSYNC_W","Write proxy for field `PSRSYNC`"],["TSM_W","Write proxy for field `TSM`"]],"type":[["PSRSYNC_R","Reader of field `PSRSYNC`"],["R","Reader of register GTCCR"],["TSM_R","Reader of field `TSM`"],["W","Writer for register GTCCR"]]});

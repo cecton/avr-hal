@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["INTF_R","Reader of field `INTF`"],["R","Reader of register EIFR"]]});

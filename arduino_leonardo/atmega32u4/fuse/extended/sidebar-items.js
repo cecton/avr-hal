@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["BODLEVEL_A","Brown-out Detector trigger level"]],"struct":[["BODLEVEL_W","Write proxy for field `BODLEVEL`"],["HWBE_W","Write proxy for field `HWBE`"]],"type":[["BODLEVEL_R","Reader of field `BODLEVEL`"],["HWBE_R","Reader of field `HWBE`"],["R","Reader of register EXTENDED"],["W","Writer for register EXTENDED"]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["OCF0A_W","Write proxy for field `OCF0A`"],["OCF0B_W","Write proxy for field `OCF0B`"],["TOV0_W","Write proxy for field `TOV0`"]],"type":[["OCF0A_R","Reader of field `OCF0A`"],["OCF0B_R","Reader of field `OCF0B`"],["R","Reader of register TIFR"],["TOV0_R","Reader of field `TOV0`"],["W","Writer for register TIFR"]]});

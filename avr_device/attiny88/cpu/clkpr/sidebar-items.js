@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["CLKPS_A","Clock Prescaler Select Bits"]],"struct":[["CLKPCE_W","Write proxy for field `CLKPCE`"],["CLKPS_W","Write proxy for field `CLKPS`"]],"type":[["CLKPCE_R","Reader of field `CLKPCE`"],["CLKPS_R","Reader of field `CLKPS`"],["R","Reader of register CLKPR"],["W","Writer for register CLKPR"]]});

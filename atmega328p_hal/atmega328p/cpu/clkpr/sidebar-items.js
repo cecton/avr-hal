@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["CLKPS_A","Clock Prescaler Select Bits"]],"type":[["CLKPCE_R","Reader of field `CLKPCE`"],["CLKPS_R","Reader of field `CLKPS`"],["R","Reader of register CLKPR"]]});

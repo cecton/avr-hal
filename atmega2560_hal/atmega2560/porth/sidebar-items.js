@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["ddrh","PORT H Data Direction Register"],["pinh","PORT H Input Pins"],["porth","PORT H Data Register"]],"struct":[["RegisterBlock","Register block"]],"type":[["DDRH","PORT H Data Direction Register"],["PINH","PORT H Input Pins"],["PORTH","PORT H Data Register"]]});

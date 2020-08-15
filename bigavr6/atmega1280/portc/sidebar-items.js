@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["ddrc","Port C Data Direction Register"],["pinc","Port C Input Pins"],["portc","Port C Data Register"]],"struct":[["RegisterBlock","Register block"]],"type":[["DDRC","Port C Data Direction Register"],["PINC","Port C Input Pins"],["PORTC","Port C Data Register"]]});

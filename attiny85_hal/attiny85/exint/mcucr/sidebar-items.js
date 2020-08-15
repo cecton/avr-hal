@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ISC0_A","Interrupt Sense Control 0 bits"]],"struct":[["ISC0_W","Write proxy for field `ISC0`"]],"type":[["ISC0_R","Reader of field `ISC0`"],["R","Reader of register MCUCR"],["W","Writer for register MCUCR"]]});

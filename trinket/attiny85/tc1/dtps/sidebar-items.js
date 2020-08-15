@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["DTPS_A",""]],"struct":[["DTPS_W","Write proxy for field `DTPS`"]],"type":[["DTPS_R","Reader of field `DTPS`"],["R","Reader of register DTPS"],["W","Writer for register DTPS"]]});

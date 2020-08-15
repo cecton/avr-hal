@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["FOC5A_W","Write proxy for field `FOC5A`"],["FOC5B_W","Write proxy for field `FOC5B`"],["FOC5C_W","Write proxy for field `FOC5C`"]],"type":[["FOC5A_R","Reader of field `FOC5A`"],["FOC5B_R","Reader of field `FOC5B`"],["FOC5C_R","Reader of field `FOC5C`"],["R","Reader of register TCCR5C"],["W","Writer for register TCCR5C"]]});

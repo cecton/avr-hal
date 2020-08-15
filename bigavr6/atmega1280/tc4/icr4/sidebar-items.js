@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["R","Reader of register ICR4"],["W","Writer for register ICR4"]]});

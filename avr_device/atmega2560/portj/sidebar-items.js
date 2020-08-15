@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["ddrj","PORT J Data Direction Register"],["pinj","PORT J Input Pins"],["portj","PORT J Data Register"]],"struct":[["RegisterBlock","Register block"]],"type":[["DDRJ","PORT J Data Direction Register"],["PINJ","PORT J Input Pins"],["PORTJ","PORT J Data Register"]]});

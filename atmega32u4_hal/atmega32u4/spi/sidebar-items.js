@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["spcr","SPI Control Register"],["spdr","SPI Data Register"],["spsr","SPI Status Register"]],"struct":[["RegisterBlock","Register block"]],"type":[["SPCR","SPI Control Register"],["SPDR","SPI Data Register"],["SPSR","SPI Status Register"]]});

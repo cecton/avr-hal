@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["JTRF_R","Reader of field `JTRF`"],["R","Reader of register MCUSR"]]});

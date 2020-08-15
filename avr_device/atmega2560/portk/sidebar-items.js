@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["ddrk","PORT K Data Direction Register"],["pink","PORT K Input Pins"],["portk","PORT K Data Register"]],"struct":[["RegisterBlock","Register block"]],"type":[["DDRK","PORT K Data Direction Register"],["PINK","PORT K Input Pins"],["PORTK","PORT K Data Register"]]});

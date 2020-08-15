@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["PCIF0_R","Reader of field `PCIF0`"],["R","Reader of register PCIFR"]]});

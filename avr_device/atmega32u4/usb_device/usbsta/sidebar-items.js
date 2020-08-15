@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["R","Reader of register USBSTA"],["SPEED_R","Reader of field `SPEED`"],["VBUS_R","Reader of field `VBUS`"]]});

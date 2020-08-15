@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["usibr","USI Buffer Register"],["usicr","USI Control Register"],["usidr","USI Data Register"],["usisr","USI Status Register"]],"struct":[["RegisterBlock","Register block"]],"type":[["USIBR","USI Buffer Register"],["USICR","USI Control Register"],["USIDR","USI Data Register"],["USISR","USI Status Register"]]});
