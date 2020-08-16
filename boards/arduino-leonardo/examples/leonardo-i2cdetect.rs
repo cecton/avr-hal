@@ -11,6 +11,7 @@ fn main() -> ! {
 
     let mut delay = arduino_leonardo::Delay::new();
     let mut pins = arduino_leonardo::Pins::new(dp.PORTB, dp.PORTC, dp.PORTD, dp.PORTE);
+    let mut led_rx = pins.led_rx.into_output(&mut pins.ddr);
     let mut serial = arduino_leonardo::Serial::new(
         dp.USART1,
         pins.d0,
@@ -60,35 +61,44 @@ fn main() -> ! {
         }};
     }
 
-    ufmt::uwrite!(&mut serial, ".").void_unwrap();
-
     let mut screen = Screen::new(address, 128, 128);
     if let Err(err) = screen.init(&mut i2c, &mut delay) {
         ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
     }
 
-    ufmt::uwrite!(&mut serial, ".").void_unwrap();
+    let mut led_rx_state = false;
+    let mut toggle_led_rx = move || if led_rx_state {
+        led_rx.set_low().void_unwrap();
+        led_rx_state = !led_rx_state;
+    } else {
+        led_rx.set_high().void_unwrap();
+        led_rx_state = !led_rx_state;
+    };
 
     let step = 64;
     let mut counter: u8 = 255 - step + 1;
     let mut direction = true;
     loop {
-        ufmt::uwrite!(&mut serial, ".").void_unwrap();
+        //ufmt::uwrite!(&mut serial, "{}", counter).void_unwrap();
+        let _ = nb::block!(serial.read()).void_unwrap();
+
         match i2c.ping_slave(address, arduino_leonardo::hal::i2c::Direction::Write) {
             Ok(true) => {
-                ufmt::uwrite!(&mut serial, ".").void_unwrap();
+                toggle_led_rx();
                 if let Err(err) = screen.fill(&mut i2c, counter) {
-                    ufmt::uwrite!(&mut serial, ".").void_unwrap();
                     ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
                 }
+                toggle_led_rx();
 
                 if direction {
-                    counter = counter.wrapping_sub(step);
+                    //counter = counter.wrapping_sub(step);
+                    counter = 0x00;
                 } else {
-                    counter = counter.wrapping_add(step);
+                    //counter = counter.wrapping_add(step);
+                    counter = 0xff;
                 }
 
-                if counter == 0 || counter == 255 - step + 1 {
+                if counter == 0 || counter == 255 - step + 1 || true {
                     direction = !direction;
                 }
             }
@@ -97,11 +107,7 @@ fn main() -> ! {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}\r", err).void_unwrap();
             }
         }
-        ufmt::uwrite!(&mut serial, "{}", counter).void_unwrap();
-        let i = nb::block!(serial.read()).void_unwrap();
-        if i == 114 {
-            ufmt::uwrite!(&mut serial, "BOOTLOADER").void_unwrap();
-        }
+        //delay.delay_ms(1000u16);
     }
 }
 
@@ -133,6 +139,7 @@ impl Screen {
             }};
         }
 
+        /*
         write!(0xae); //--turn off oled panel
 
         write!(0x15); //set column addresses
@@ -182,6 +189,7 @@ impl Screen {
 
         write!(0xfd); //Unlock commands
         write!(0x12);
+        */
 
         write!(0xAF);
         delay.delay_ms(300u16);
