@@ -10,6 +10,7 @@ fn main() -> ! {
 
     let mut delay = arduino_leonardo::Delay::new();
     let mut pins = arduino_leonardo::Pins::new(dp.PORTB, dp.PORTC, dp.PORTD, dp.PORTE);
+    let mut led_rx = pins.led_rx.into_output(&mut pins.ddr);
     let mut serial = arduino_leonardo::Serial::new(
         dp.USART1,
         pins.d0,
@@ -23,14 +24,14 @@ fn main() -> ! {
         50000,
     );
 
-    ufmt::uwriteln!(&mut serial, "Write direction test:\r").void_unwrap();
-    i2c.i2cdetect(&mut serial, arduino_leonardo::hal::i2c::Direction::Write)
-        .void_unwrap();
-    ufmt::uwriteln!(&mut serial, "\r\nRead direction test:\r").void_unwrap();
-    i2c.i2cdetect(&mut serial, arduino_leonardo::hal::i2c::Direction::Read)
-        .void_unwrap();
+    let address = 0b0111100; // replace this by the address of your device
 
     loop {
+        match i2c.ping_slave(address, arduino_leonardo::hal::i2c::Direction::Write) {
+            Ok(true) => led_rx.set_low().void_unwrap(),
+            Ok(false) => led_rx.set_high().void_unwrap(),
+            Err(err) => ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap(),
+        }
         delay.delay_ms(1000u16);
     }
 }
