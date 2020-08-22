@@ -5,6 +5,24 @@
 extern crate panic_halt;
 use arduino_leonardo::prelude::*;
 
+const FRAMES: &[&[u8]] = &[
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-1.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-2.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-3.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-4.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-5.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-6.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-7.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-8.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-9.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-10.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-11.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-12.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-13.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-14.xbm"),
+    xbm::include_xbm!("boards/arduino-leonardo/examples/F501-15.xbm"),
+];
+
 #[arduino_leonardo::entry]
 fn main() -> ! {
     let dp = arduino_leonardo::Peripherals::take().unwrap();
@@ -66,6 +84,21 @@ fn main() -> ! {
         ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
     }
 
+    if let Err(err) = screen.fill(&mut i2c, 0x00) {
+        ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+    }
+
+    loop {
+        for i in 0..1 {
+            ufmt::uwriteln!(&mut serial, "{}\r", i).void_unwrap();
+            if let Err(err) = screen.draw(&mut i2c, FRAMES[i], 40, 42, &mut serial) {
+                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+            }
+            delay.delay_ms(1000u16);
+        }
+    }
+
+    /*
     let mut led_rx_state = false;
     let mut toggle_led_rx = move || if led_rx_state {
         led_rx.set_low().void_unwrap();
@@ -109,6 +142,7 @@ fn main() -> ! {
         }
         //delay.delay_ms(1000u16);
     }
+    */
 }
 
 struct Screen {
@@ -192,7 +226,8 @@ impl Screen {
         */
 
         write!(0xAF);
-        delay.delay_ms(300u16);
+        write!(0xa0, 0x51);
+        //delay.delay_ms(300u16);
 
         Ok(())
     }
@@ -222,6 +257,55 @@ impl Screen {
             pixels -= 2 * 2048;
         }
         if pixels > 0 {
+            i2c.write(self.address, &self.buffer[..=pixels])?;
+        }
+
+        Ok(())
+    }
+
+    fn draw<W: _embedded_hal_blocking_i2c_Write>(
+        &mut self,
+        i2c: &mut W,
+        image: &[u8],
+        width: u8,
+        height: u8,
+        mut writer: &mut impl ufmt::uWrite,
+    ) -> Result<(), W::Error> {
+        macro_rules! write {
+            ($($byte:expr),+) => {{
+                i2c.write(self.address, &[0b00000000, $($byte),+])?;
+            }};
+        }
+
+        write!(0x15, 0, width / 2 - 1);
+        write!(0x75, 0, height - 1);
+        let mut pixels: usize = width as usize * height as usize;
+        let mut chunks = image.iter().map(|x| [
+            (x & 0b10000000).count_ones() as u8 * 0b11110000
+            + (x & 0b01000000).count_ones() as u8 * 0b00001111,
+            (x & 0b00100000).count_ones() as u8 * 0b11110000
+            + (x & 0b00010000).count_ones() as u8 * 0b00001111,
+            (x & 0b00001000).count_ones() as u8 * 0b11110000
+            + (x & 0b00000100).count_ones() as u8 * 0b00001111,
+            (x & 0b00000010).count_ones() as u8 * 0b11110000
+            + (x & 0b00000001).count_ones() as u8 * 0b00001111,
+        ]);
+        while pixels >= 2 * 2048 {
+            for i in (1..=2048).step_by(4) {
+                self.buffer[i..(i+4)].copy_from_slice(&chunks.next().unwrap());
+            }
+
+            i2c.write(self.address, &self.buffer)?;
+            pixels -= 2 * 2048;
+        }
+        if pixels > 0 {
+            let mut i = 1;
+            while let Some(chunk) = chunks.next() {
+                self.buffer[i..(i+4)].copy_from_slice(&chunk);
+                let _ = ufmt::uwriteln!(&mut writer, "{}: {:?}\r", i, chunk);
+                i += 4;
+            }
+
             i2c.write(self.address, &self.buffer[..=pixels])?;
         }
 

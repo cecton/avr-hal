@@ -17,3 +17,6 @@ panic-halt = "0.2.0"
 nb = "0.1.2"
 ufmt = "0.1.0"
 avr-device = "0.2.1"
+xbm = { path = "/home/cecile/repos/xbm" }
+ssd1306 = { path = "/home/cecile/repos/ssd1306", version = "0.4.0" }
+embedded-graphics = "0.6.0"
