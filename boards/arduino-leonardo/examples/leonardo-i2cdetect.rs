@@ -126,6 +126,14 @@ fn main() -> ! {
     }
     */
 
+    macro_rules! draw_frame {
+        ($frame:expr) => {{
+            screen.draw(&mut i2c, $frame, 40, 42, &mut serial);
+            delay.delay_ms(250u16);
+            led_rx.toggle().void_unwrap();
+        }};
+    }
+
     loop {
         //for i in 0..15 {
             /*
@@ -140,61 +148,21 @@ fn main() -> ! {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
             */
-            {
-            if let Err(err) = screen.draw(&mut i2c, FRAME_1, 40, 42, &mut serial) {
-                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
-            }
-            delay.delay_ms(250u16);
-            led_rx.toggle().void_unwrap();
-            }
-
-            {
-            if let Err(err) = screen.draw(&mut i2c, FRAME_2, 40, 42, &mut serial) {
-                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
-            }
-            delay.delay_ms(250u16);
-            led_rx.toggle().void_unwrap();
-            }
-
-            {
-            if let Err(err) = screen.draw(&mut i2c, FRAME_3, 40, 42, &mut serial) {
-                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
-            }
-            delay.delay_ms(250u16);
-            led_rx.toggle().void_unwrap();
-            }
-
-            {
-            if let Err(err) = screen.draw(&mut i2c, FRAME_4, 40, 42, &mut serial) {
-                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
-            }
-            delay.delay_ms(250u16);
-            led_rx.toggle().void_unwrap();
-            }
-
-            {
-            if let Err(err) = screen.draw(&mut i2c, FRAME_5, 40, 42, &mut serial) {
-                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
-            }
-            delay.delay_ms(250u16);
-            led_rx.toggle().void_unwrap();
-            }
-
-            {
-            if let Err(err) = screen.draw(&mut i2c, FRAME_6, 40, 42, &mut serial) {
-                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
-            }
-            delay.delay_ms(250u16);
-            led_rx.toggle().void_unwrap();
-            }
-
-            {
-            if let Err(err) = screen.draw(&mut i2c, FRAME_7, 40, 42, &mut serial) {
-                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
-            }
-            delay.delay_ms(250u16);
-            led_rx.toggle().void_unwrap();
-            }
+            draw_frame!(FRAME_1);
+            draw_frame!(FRAME_2);
+            draw_frame!(FRAME_3);
+            draw_frame!(FRAME_4);
+            draw_frame!(FRAME_5);
+            draw_frame!(FRAME_6);
+            draw_frame!(FRAME_7);
+            draw_frame!(FRAME_8);
+            draw_frame!(FRAME_9);
+            draw_frame!(FRAME_10);
+            draw_frame!(FRAME_11);
+            draw_frame!(FRAME_12);
+            draw_frame!(FRAME_13);
+            draw_frame!(FRAME_14);
+            draw_frame!(FRAME_15);
 
         //}
     }
@@ -425,11 +393,13 @@ impl Screen {
                 pixels -= 8;
             }
 
+            /*
             for i in 0..42 {
                 let _ = ufmt::uwriteln!(&mut writer, "line={} {:?}\r", i, self.buffer[(i*20+1)..((i+1)*20+1)]);
             }
+            */
 
-            let _ = ufmt::uwriteln!(&mut writer, "pixels={} i={}\r", pixels, i);
+            //let _ = ufmt::uwriteln!(&mut writer, "pixels={} i={}\r", pixels, i);
             i2c.write(self.address, &self.buffer[..=i])?;
             //let _ = ufmt::uwriteln!(&mut writer, "crc={}\r", crc16::checksum_x25(image));
         }
