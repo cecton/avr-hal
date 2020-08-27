@@ -20,3 +20,4 @@ avr-device = "0.2.1"
 xbm = { path = "/home/cecile/repos/xbm" }
 ssd1306 = { path = "/home/cecile/repos/ssd1306", version = "0.4.0" }
 embedded-graphics = "0.6.0"
+#crc = { version = "^1.0.0", default_features = false }

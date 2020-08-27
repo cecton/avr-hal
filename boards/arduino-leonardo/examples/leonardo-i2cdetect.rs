@@ -110,7 +110,7 @@ fn main() -> ! {
     */
 
     loop {
-        for i in 0..15 {
+        for i in 0..1 {
             /*
             if let Err(err) = screen.fill(&mut i2c, 0x00) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
@@ -126,10 +126,13 @@ fn main() -> ! {
             if let Err(err) = screen.draw(&mut i2c, FRAMES[9], 40, 42, &mut serial) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
-            delay.delay_ms(2250u16);
+            delay.delay_ms(3250u16);
             led_rx.toggle().void_unwrap();
         }
+        break;
     }
+
+    loop {}
 
     /*
     let mut led_rx_state = false;
@@ -310,7 +313,15 @@ impl Screen {
             }};
         }
 
-        self.buffer.fill(0xff);
+        /*
+            for i in 0..42 {
+                let _ = ufmt::uwriteln!(&mut writer, "line={} {:?}\r", i, self.buffer[(i*20+1)..((i+1)*20+1)]);
+            }
+        */
+
+        //use crc::crc16;
+        //let _ = ufmt::uwriteln!(&mut writer, "crc={}\r", crc16::checksum_x25(image));
+        self.buffer.fill(0b01010101);
         self.buffer[0] = 0b01000000;
         write!(0x15, 0, width / 2 - 1);
         write!(0x75, 0, height - 1);
@@ -352,6 +363,7 @@ impl Screen {
 
             let _ = ufmt::uwriteln!(&mut writer, "pixels={} i={}\r", pixels, i);
             i2c.write(self.address, &self.buffer[..=i])?;
+            //let _ = ufmt::uwriteln!(&mut writer, "crc={}\r", crc16::checksum_x25(image));
         }
 
         Ok(())
