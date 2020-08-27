@@ -6,6 +6,8 @@ extern crate panic_halt;
 use arduino_leonardo::prelude::*;
 
 const FRAMES: &[&[u8]] = &[
+    // TODO there seems to be an X offset in xbm
+    /*
     xbm::include_xbm!("boards/arduino-leonardo/examples/F501-1.xbm"),
     xbm::include_xbm!("boards/arduino-leonardo/examples/F501-2.xbm"),
     xbm::include_xbm!("boards/arduino-leonardo/examples/F501-3.xbm"),
@@ -21,6 +23,22 @@ const FRAMES: &[&[u8]] = &[
     xbm::include_xbm!("boards/arduino-leonardo/examples/F501-13.xbm"),
     xbm::include_xbm!("boards/arduino-leonardo/examples/F501-14.xbm"),
     xbm::include_xbm!("boards/arduino-leonardo/examples/F501-15.xbm"),
+    */
+    include_bytes!("F501-1.raw"),
+    include_bytes!("F501-2.raw"),
+    include_bytes!("F501-3.raw"),
+    include_bytes!("F501-4.raw"),
+    include_bytes!("F501-5.raw"),
+    include_bytes!("F501-6.raw"),
+    include_bytes!("F501-7.raw"),
+    include_bytes!("F501-8.raw"),
+    include_bytes!("F501-9.raw"),
+    include_bytes!("F501-10.raw"),
+    include_bytes!("F501-11.raw"),
+    include_bytes!("F501-12.raw"),
+    include_bytes!("F501-13.raw"),
+    include_bytes!("F501-14.raw"),
+    include_bytes!("F501-15.raw"),
 ];
 
 #[arduino_leonardo::entry]
@@ -89,17 +107,18 @@ fn main() -> ! {
     }
 
     loop {
-        for i in 0..=1 {
+        for i in 0..15 {
             ufmt::uwriteln!(&mut serial, "{}\r", i).void_unwrap();
+            /*
             if let Err(err) = screen.draw_rect(&mut i2c, i * 0xff, 32, 64, 40, 42, &mut serial) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
-            /*
-            if let Err(err) = screen.draw(&mut i2c, FRAMES[9], 40, 42, &mut serial) {
+            */
+            if let Err(err) = screen.draw(&mut i2c, FRAMES[6], 40, 42, &mut serial) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
-            */
-            delay.delay_ms(3000u16);
+            delay.delay_ms(2250u16);
+            led_rx.toggle().void_unwrap();
         }
     }
 
@@ -307,11 +326,12 @@ impl Screen {
             let mut i = 1;
             while let Some(chunk) = chunks.next() {
                 self.buffer[i..(i+4)].copy_from_slice(&chunk);
-                let _ = ufmt::uwriteln!(&mut writer, "{}: {:?}\r", i, chunk);
                 i += 4;
+                pixels -= 8;
+                //let _ = ufmt::uwriteln!(&mut writer, "pixels={} i={}\r", pixels, i);
             }
 
-            i2c.write(self.address, &self.buffer[..=pixels])?;
+            i2c.write(self.address, &self.buffer[..=i])?;
         }
 
         Ok(())
@@ -331,11 +351,7 @@ impl Screen {
             let x = c / 16;
             let x = x * 16 + x;
             for i in 1..2049 {
-                if i % 2 == 0 {
-                    self.buffer[i] = x;
-                } else {
-                    self.buffer[i] = 0;
-                }
+                self.buffer[i] = x & 0b11000011;
             }
         }
 
