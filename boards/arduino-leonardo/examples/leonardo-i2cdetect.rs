@@ -1,4 +1,5 @@
 #![allow(unused_macros, dead_code)]
+#![feature(slice_fill)]
 #![no_std]
 #![no_main]
 
@@ -102,19 +103,27 @@ fn main() -> ! {
         ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
     }
 
+    /*
     if let Err(err) = screen.fill(&mut i2c, 0x00) {
         ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
     }
+    */
 
     loop {
         for i in 0..15 {
+            /*
+            if let Err(err) = screen.fill(&mut i2c, 0x00) {
+                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+            }
+            */
+
             ufmt::uwriteln!(&mut serial, "{}\r", i).void_unwrap();
             /*
             if let Err(err) = screen.draw_rect(&mut i2c, i * 0xff, 32, 64, 40, 42, &mut serial) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
             */
-            if let Err(err) = screen.draw(&mut i2c, FRAMES[6], 40, 42, &mut serial) {
+            if let Err(err) = screen.draw(&mut i2c, FRAMES[9], 40, 42, &mut serial) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
             delay.delay_ms(2250u16);
@@ -301,6 +310,8 @@ impl Screen {
             }};
         }
 
+        self.buffer.fill(0xff);
+        self.buffer[0] = 0b01000000;
         write!(0x15, 0, width / 2 - 1);
         write!(0x75, 0, height - 1);
         let mut pixels: usize = width as usize * height as usize;
@@ -326,11 +337,20 @@ impl Screen {
             let mut i = 1;
             while let Some(chunk) = chunks.next() {
                 self.buffer[i..(i+4)].copy_from_slice(&chunk);
+                /*
+                if i > 1 && pixels % 40 == 0 {
+                    let _ = ufmt::uwriteln!(&mut writer, "line={} {:?}\r", 42 - pixels / 40, self.buffer[(i+4-20)..(i+4)]);
+                }
+                */
                 i += 4;
                 pixels -= 8;
-                //let _ = ufmt::uwriteln!(&mut writer, "pixels={} i={}\r", pixels, i);
             }
 
+            for i in 0..42 {
+                let _ = ufmt::uwriteln!(&mut writer, "line={} {:?}\r", i, self.buffer[(i*20+1)..((i+1)*20+1)]);
+            }
+
+            let _ = ufmt::uwriteln!(&mut writer, "pixels={} i={}\r", pixels, i);
             i2c.write(self.address, &self.buffer[..=i])?;
         }
 
