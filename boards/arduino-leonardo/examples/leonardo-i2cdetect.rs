@@ -89,12 +89,17 @@ fn main() -> ! {
     }
 
     loop {
-        for i in 0..1 {
+        for i in 0..=1 {
             ufmt::uwriteln!(&mut serial, "{}\r", i).void_unwrap();
-            if let Err(err) = screen.draw(&mut i2c, FRAMES[i], 40, 42, &mut serial) {
+            if let Err(err) = screen.draw_rect(&mut i2c, i * 0xff, 32, 64, 40, 42, &mut serial) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
-            delay.delay_ms(1000u16);
+            /*
+            if let Err(err) = screen.draw(&mut i2c, FRAMES[9], 40, 42, &mut serial) {
+                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+            }
+            */
+            delay.delay_ms(3000u16);
         }
     }
 
@@ -305,6 +310,75 @@ impl Screen {
                 let _ = ufmt::uwriteln!(&mut writer, "{}: {:?}\r", i, chunk);
                 i += 4;
             }
+
+            i2c.write(self.address, &self.buffer[..=pixels])?;
+        }
+
+        Ok(())
+    }
+
+    fn draw_rect<W: _embedded_hal_blocking_i2c_Write>(
+        &mut self,
+        i2c: &mut W,
+        c: u8,
+        x: u8,
+        y: u8,
+        width: u8,
+        height: u8,
+        mut writer: &mut impl ufmt::uWrite,
+    ) -> Result<(), W::Error> {
+        {
+            let x = c / 16;
+            let x = x * 16 + x;
+            for i in 1..2049 {
+                if i % 2 == 0 {
+                    self.buffer[i] = x;
+                } else {
+                    self.buffer[i] = 0;
+                }
+            }
+        }
+
+        macro_rules! write {
+            ($($byte:expr),+) => {{
+                i2c.write(self.address, &[0b00000000, $($byte),+])?;
+            }};
+        }
+
+        write!(0x15, x / 2, x / 2 + width / 2 - 1);
+        write!(0x75, y, y + height - 1);
+        let mut pixels: usize = width as usize * height as usize;
+        /*
+        let mut chunks = image.iter().map(|x| [
+            (x & 0b10000000).count_ones() as u8 * 0b11110000
+            + (x & 0b01000000).count_ones() as u8 * 0b00001111,
+            (x & 0b00100000).count_ones() as u8 * 0b11110000
+            + (x & 0b00010000).count_ones() as u8 * 0b00001111,
+            (x & 0b00001000).count_ones() as u8 * 0b11110000
+            + (x & 0b00000100).count_ones() as u8 * 0b00001111,
+            (x & 0b00000010).count_ones() as u8 * 0b11110000
+            + (x & 0b00000001).count_ones() as u8 * 0b00001111,
+        ]);
+        */
+        while pixels >= 2 * 2048 {
+            /*
+            for i in (1..=2048).step_by(4) {
+                self.buffer[i..(i+4)].copy_from_slice(&chunks.next().unwrap());
+            }
+            */
+
+            i2c.write(self.address, &self.buffer)?;
+            pixels -= 2 * 2048;
+        }
+        if pixels > 0 {
+            /*
+            let mut i = 1;
+            while let Some(chunk) = chunks.next() {
+                self.buffer[i..(i+4)].copy_from_slice(&chunk);
+                let _ = ufmt::uwriteln!(&mut writer, "{}: {:?}\r", i, chunk);
+                i += 4;
+            }
+            */
 
             i2c.write(self.address, &self.buffer[..=pixels])?;
         }
