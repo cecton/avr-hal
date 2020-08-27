@@ -6,6 +6,7 @@
 extern crate panic_halt;
 use arduino_leonardo::prelude::*;
 
+/*
 const FRAMES: &[&[u8]] = &[
     // TODO there seems to be an X offset in xbm
     /*
@@ -41,6 +42,22 @@ const FRAMES: &[&[u8]] = &[
     include_bytes!("F501-14.raw"),
     include_bytes!("F501-15.raw"),
 ];
+*/
+const FRAME_1: &[u8] = include_bytes!("F501-1.raw");
+const FRAME_2: &[u8] = include_bytes!("F501-2.raw");
+const FRAME_3: &[u8] = include_bytes!("F501-3.raw");
+const FRAME_4: &[u8] = include_bytes!("F501-4.raw");
+const FRAME_5: &[u8] = include_bytes!("F501-5.raw");
+const FRAME_6: &[u8] = include_bytes!("F501-6.raw");
+const FRAME_7: &[u8] = include_bytes!("F501-7.raw");
+const FRAME_8: &[u8] = include_bytes!("F501-8.raw");
+const FRAME_9: &[u8] = include_bytes!("F501-9.raw");
+const FRAME_10: &[u8] = include_bytes!("F501-10.raw");
+const FRAME_11: &[u8] = include_bytes!("F501-11.raw");
+const FRAME_12: &[u8] = include_bytes!("F501-12.raw");
+const FRAME_13: &[u8] = include_bytes!("F501-13.raw");
+const FRAME_14: &[u8] = include_bytes!("F501-14.raw");
+const FRAME_15: &[u8] = include_bytes!("F501-15.raw");
 
 #[arduino_leonardo::entry]
 fn main() -> ! {
@@ -110,26 +127,76 @@ fn main() -> ! {
     */
 
     loop {
-        for i in 0..1 {
+        //for i in 0..15 {
             /*
             if let Err(err) = screen.fill(&mut i2c, 0x00) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
             */
 
-            ufmt::uwriteln!(&mut serial, "{}\r", i).void_unwrap();
+            //ufmt::uwriteln!(&mut serial, "{}\r", i).void_unwrap();
             /*
             if let Err(err) = screen.draw_rect(&mut i2c, i * 0xff, 32, 64, 40, 42, &mut serial) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
             */
-            if let Err(err) = screen.draw(&mut i2c, FRAMES[9], 40, 42, &mut serial) {
+            {
+            if let Err(err) = screen.draw(&mut i2c, FRAME_1, 40, 42, &mut serial) {
                 ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
             }
-            delay.delay_ms(3250u16);
+            delay.delay_ms(250u16);
             led_rx.toggle().void_unwrap();
-        }
-        break;
+            }
+
+            {
+            if let Err(err) = screen.draw(&mut i2c, FRAME_2, 40, 42, &mut serial) {
+                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+            }
+            delay.delay_ms(250u16);
+            led_rx.toggle().void_unwrap();
+            }
+
+            {
+            if let Err(err) = screen.draw(&mut i2c, FRAME_3, 40, 42, &mut serial) {
+                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+            }
+            delay.delay_ms(250u16);
+            led_rx.toggle().void_unwrap();
+            }
+
+            {
+            if let Err(err) = screen.draw(&mut i2c, FRAME_4, 40, 42, &mut serial) {
+                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+            }
+            delay.delay_ms(250u16);
+            led_rx.toggle().void_unwrap();
+            }
+
+            {
+            if let Err(err) = screen.draw(&mut i2c, FRAME_5, 40, 42, &mut serial) {
+                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+            }
+            delay.delay_ms(250u16);
+            led_rx.toggle().void_unwrap();
+            }
+
+            {
+            if let Err(err) = screen.draw(&mut i2c, FRAME_6, 40, 42, &mut serial) {
+                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+            }
+            delay.delay_ms(250u16);
+            led_rx.toggle().void_unwrap();
+            }
+
+            {
+            if let Err(err) = screen.draw(&mut i2c, FRAME_7, 40, 42, &mut serial) {
+                ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
+            }
+            delay.delay_ms(250u16);
+            led_rx.toggle().void_unwrap();
+            }
+
+        //}
     }
 
     loop {}
@@ -185,7 +252,7 @@ struct Screen {
     address: u8,
     width: u8,
     height: u8,
-    buffer: [u8; 2049],
+    buffer: [u8; 1024 + 1],
 }
 
 impl Screen {
@@ -194,7 +261,7 @@ impl Screen {
             address,
             width,
             height,
-            buffer: [0b01000000; 2049],
+            buffer: [0b01000000; 1024 + 1],
         }
     }
 
@@ -275,7 +342,7 @@ impl Screen {
     ) -> Result<(), W::Error> {
         let x = c / 16;
         let x = x * 16 + x;
-        for i in 1..2049 {
+        for i in 1..=1024 {
             self.buffer[i] = x;
         }
 
@@ -288,9 +355,9 @@ impl Screen {
         write!(0x15, 0, self.width / 2 - 1);
         write!(0x75, 0, self.height - 1);
         let mut pixels: usize = self.width as usize * self.height as usize;
-        while pixels >= 2 * 2048 {
+        while pixels >= 2 * 1024 {
             i2c.write(self.address, &self.buffer)?;
-            pixels -= 2 * 2048;
+            pixels -= 2 * 1024;
         }
         if pixels > 0 {
             i2c.write(self.address, &self.buffer[..=pixels])?;
@@ -321,8 +388,9 @@ impl Screen {
 
         //use crc::crc16;
         //let _ = ufmt::uwriteln!(&mut writer, "crc={}\r", crc16::checksum_x25(image));
-        self.buffer.fill(0b01010101);
-        self.buffer[0] = 0b01000000;
+        //self.buffer.fill(0b01010101);
+        //self.buffer[0] = 0b01000000;
+        //let _ = ufmt::uwriteln!(&mut writer, "checksum={}\r", checksum(image));
         write!(0x15, 0, width / 2 - 1);
         write!(0x75, 0, height - 1);
         let mut pixels: usize = width as usize * height as usize;
@@ -336,13 +404,13 @@ impl Screen {
             (x & 0b00000010).count_ones() as u8 * 0b11110000
             + (x & 0b00000001).count_ones() as u8 * 0b00001111,
         ]);
-        while pixels >= 2 * 2048 {
-            for i in (1..=2048).step_by(4) {
+        while pixels >= 2 * 1024 {
+            for i in (1..=1024).step_by(4) {
                 self.buffer[i..(i+4)].copy_from_slice(&chunks.next().unwrap());
             }
 
             i2c.write(self.address, &self.buffer)?;
-            pixels -= 2 * 2048;
+            pixels -= 2 * 1024;
         }
         if pixels > 0 {
             let mut i = 1;
@@ -382,7 +450,7 @@ impl Screen {
         {
             let x = c / 16;
             let x = x * 16 + x;
-            for i in 1..2049 {
+            for i in 1..=1024 {
                 self.buffer[i] = x & 0b11000011;
             }
         }
@@ -408,15 +476,15 @@ impl Screen {
             + (x & 0b00000001).count_ones() as u8 * 0b00001111,
         ]);
         */
-        while pixels >= 2 * 2048 {
+        while pixels >= 2 * 1024 {
             /*
-            for i in (1..=2048).step_by(4) {
+            for i in (1..=1024).step_by(4) {
                 self.buffer[i..(i+4)].copy_from_slice(&chunks.next().unwrap());
             }
             */
 
             i2c.write(self.address, &self.buffer)?;
-            pixels -= 2 * 2048;
+            pixels -= 2 * 1024;
         }
         if pixels > 0 {
             /*
@@ -433,4 +501,12 @@ impl Screen {
 
         Ok(())
     }
+}
+
+fn checksum(a: &[u8]) -> usize {
+    let mut sum: usize = 0;
+    for (i, x) in a.iter().enumerate() {
+        sum = sum.wrapping_add(i * x.count_ones() as usize);
+    }
+    sum
 }
