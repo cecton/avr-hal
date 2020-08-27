@@ -120,19 +120,20 @@ fn main() -> ! {
         ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
     }
 
-    /*
     if let Err(err) = screen.fill(&mut i2c, 0x00) {
         ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
     }
-    */
 
     macro_rules! draw_frame {
         ($frame:expr) => {{
             screen.draw(&mut i2c, $frame, 40, 42, &mut serial);
-            delay.delay_ms(250u16);
+            delay.delay_ms(1000u16);
             led_rx.toggle().void_unwrap();
         }};
     }
+
+    write!(0x15, 0, 40 / 2 - 1);
+    write!(0x75, 0, 42 - 1);
 
     loop {
         //for i in 0..15 {
@@ -359,8 +360,8 @@ impl Screen {
         //self.buffer.fill(0b01010101);
         //self.buffer[0] = 0b01000000;
         //let _ = ufmt::uwriteln!(&mut writer, "checksum={}\r", checksum(image));
-        write!(0x15, 0, width / 2 - 1);
-        write!(0x75, 0, height - 1);
+        //write!(0x15, 0, width / 2 - 1);
+        //write!(0x75, 0, height - 1);
         let mut pixels: usize = width as usize * height as usize;
         let mut chunks = image.iter().map(|x| [
             (x & 0b10000000).count_ones() as u8 * 0b11110000
@@ -372,6 +373,7 @@ impl Screen {
             (x & 0b00000010).count_ones() as u8 * 0b11110000
             + (x & 0b00000001).count_ones() as u8 * 0b00001111,
         ]);
+        /*
         while pixels >= 2 * 1024 {
             for i in (1..=1024).step_by(4) {
                 self.buffer[i..(i+4)].copy_from_slice(&chunks.next().unwrap());
@@ -380,8 +382,9 @@ impl Screen {
             i2c.write(self.address, &self.buffer)?;
             pixels -= 2 * 1024;
         }
+        */
         if pixels > 0 {
-            let mut i = 1;
+            let mut i = 0;
             while let Some(chunk) = chunks.next() {
                 self.buffer[i..(i+4)].copy_from_slice(&chunk);
                 /*
@@ -392,6 +395,7 @@ impl Screen {
                 i += 4;
                 pixels -= 8;
             }
+            self.buffer[0] = 0b01000000;
 
             /*
             for i in 0..42 {
