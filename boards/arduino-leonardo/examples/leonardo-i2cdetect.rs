@@ -59,6 +59,8 @@ const FRAME_13: &[u8] = include_bytes!("F501-13.raw");
 const FRAME_14: &[u8] = include_bytes!("F501-14.raw");
 const FRAME_15: &[u8] = include_bytes!("F501-15.raw");
 
+static mut BUFFER: [u8; 1024 + 1] = [0; 1024 + 1];
+
 #[arduino_leonardo::entry]
 fn main() -> ! {
     let dp = arduino_leonardo::Peripherals::take().unwrap();
@@ -115,7 +117,7 @@ fn main() -> ! {
         }};
     }
 
-    let mut screen = Screen::new(address, 128, 128);
+    let mut screen = unsafe { Screen::new(&mut BUFFER, address, 128, 128) };
     if let Err(err) = screen.init(&mut i2c, &mut delay) {
         ufmt::uwriteln!(&mut serial, "Error: {:?}", err).void_unwrap();
     }
@@ -134,6 +136,9 @@ fn main() -> ! {
 
     write!(0x15, 0, 40 / 2 - 1);
     write!(0x75, 0, 42 - 1);
+
+    let (sph, spl) = sph_spl();
+    ufmt::uwriteln!(&mut serial, "SPH={} SPL={}\r", sph, spl).void_unwrap();
 
     loop {
         //for i in 0..15 {
@@ -221,16 +226,16 @@ struct Screen {
     address: u8,
     width: u8,
     height: u8,
-    buffer: [u8; 1024 + 1],
+    buffer: &'static mut [u8; 1024 + 1],
 }
 
 impl Screen {
-    fn new(address: u8, width: u8, height: u8) -> Screen {
+    fn new(buffer: &'static mut [u8; 1024 + 1], address: u8, width: u8, height: u8) -> Screen {
         Self {
             address,
             width,
             height,
-            buffer: [0b01000000; 1024 + 1],
+            buffer,
         }
     }
 
@@ -325,7 +330,7 @@ impl Screen {
         write!(0x75, 0, self.height - 1);
         let mut pixels: usize = self.width as usize * self.height as usize;
         while pixels >= 2 * 1024 {
-            i2c.write(self.address, &self.buffer)?;
+            i2c.write(self.address, self.buffer)?;
             pixels -= 2 * 1024;
         }
         if pixels > 0 {
@@ -335,6 +340,7 @@ impl Screen {
         Ok(())
     }
 
+    #[inline(never)]
     fn draw<W: _embedded_hal_blocking_i2c_Write>(
         &mut self,
         i2c: &mut W,
@@ -363,16 +369,18 @@ impl Screen {
         //write!(0x15, 0, width / 2 - 1);
         //write!(0x75, 0, height - 1);
         let mut pixels: usize = width as usize * height as usize;
-        let mut chunks = image.iter().map(|x| [
-            (x & 0b10000000).count_ones() as u8 * 0b11110000
-            + (x & 0b01000000).count_ones() as u8 * 0b00001111,
-            (x & 0b00100000).count_ones() as u8 * 0b11110000
-            + (x & 0b00010000).count_ones() as u8 * 0b00001111,
-            (x & 0b00001000).count_ones() as u8 * 0b11110000
-            + (x & 0b00000100).count_ones() as u8 * 0b00001111,
-            (x & 0b00000010).count_ones() as u8 * 0b11110000
-            + (x & 0b00000001).count_ones() as u8 * 0b00001111,
-        ]);
+        let mut chunks = image.iter().map(#[inline(never)] |x| {
+            [
+                (x & 0b10000000).count_ones() as u8 * 0b11110000
+                + (x & 0b01000000).count_ones() as u8 * 0b00001111,
+                (x & 0b00100000).count_ones() as u8 * 0b11110000
+                + (x & 0b00010000).count_ones() as u8 * 0b00001111,
+                (x & 0b00001000).count_ones() as u8 * 0b11110000
+                + (x & 0b00000100).count_ones() as u8 * 0b00001111,
+                (x & 0b00000010).count_ones() as u8 * 0b11110000
+                + (x & 0b00000001).count_ones() as u8 * 0b00001111,
+            ]
+        });
         /*
         while pixels >= 2 * 1024 {
             for i in (1..=1024).step_by(4) {
@@ -405,6 +413,10 @@ impl Screen {
 
             //let _ = ufmt::uwriteln!(&mut writer, "pixels={} i={}\r", pixels, i);
             i2c.write(self.address, &self.buffer[..=i])?;
+            /*
+            let (sph, spl) = sph_spl();
+            let _ = ufmt::uwriteln!(&mut writer, "SPH={} SPL={}\r", sph, spl);
+            */
             //let _ = ufmt::uwriteln!(&mut writer, "crc={}\r", crc16::checksum_x25(image));
         }
 
@@ -457,7 +469,7 @@ impl Screen {
             }
             */
 
-            i2c.write(self.address, &self.buffer)?;
+            i2c.write(self.address, self.buffer)?;
             pixels -= 2 * 1024;
         }
         if pixels > 0 {
@@ -483,4 +495,13 @@ fn checksum(a: &[u8]) -> usize {
         sum = sum.wrapping_add(i * x.count_ones() as usize);
     }
     sum
+}
+
+fn sph_spl() -> (u8, u8) {
+    // https://cdn.sparkfun.com/datasheets/Dev/Arduino/Boards/ATMega32U4.pdf page 410
+    let p = 0x5e as *const u8;
+    let sph = unsafe { *p };
+    let p = 0x5d as *const u8;
+    let spl = unsafe { *p };
+    (sph, spl)
 }
